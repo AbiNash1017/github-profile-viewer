@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Viewer</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sogdian&display=swap');
+
+    body {
+        font-family: "Noto Sans Sogdian", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        background-image: url(github.jpg);
+        background-color: #0d1116;
+        background-repeat: no-repeat;
+        background-size: cover;
+        margin: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: aliceblue;
+    }
+
+    #profile {
+        display: none;
+    }
+
+    .gap {
+        padding: 20px;
+    }
+
+    .container {
+        padding: 10px;
+        text-align: center;
+    }
+
+    .transparent-background {
+        gap: 5px;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 18px;
+        margin: 20px;
+    }
+
+    button {
+        background-color: rgba(107, 104, 104, 0.468);
+        color: aliceblue;
+        margin: 10px;
+        padding: 8px;
+        border-color: solid 2px aliceblue;
+        border: 1px solid aliceblue;
+        border-radius: 25px;
+    }
+
+    .btn {
+        text-decoration: none;
+        background-color: rgba(206, 201, 201, 0.765);
+        color: aliceblue;
+        border: 1px solid aliceblue;
+        border-radius: 25px;
+        margin: 3px;
+        padding: 3px;
+        height: 35px;
+    }
+
+    .tbg {
+        background-color: rgba(171, 170, 170, 0.468);
+        border: 1px solid aliceblue;
+        color: aliceblue;
+        border-radius: 25px;
+        margin: 10px;
+        padding: 8px;
+    }
+
+
+    .follow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .bio,
+    .blg,
+    .pulicrepos,
+    .cmpny {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 20px;
+        gap: 10px;
+    }
+
+    .mail {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+
+    }
+
+    .follow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+</style>
+
+<body>
+    <div class="container ">
+        <div class="gap">
+            <h1>Github Profile Viewer</h1><br>
+            <input class="tbg" type="text" id="username" placeholder="enter git username">
+            <button id="myButton" onclick="fetchprofile()">Get Profile</button>
+        </div>
+        <div class="transparent-background" id="profile"></div>
+    </div>
+    <script>
+        document.getElementById('myButton').addEventListener('click', function () {
+            document.getElementById('profile').style.display = 'block';
+        });
+        function fetchprofile() {
+            const username = document.getElementById('username').value
+            if (!username) {
+                alert('enter an valid username')
+                return
+            }
+            fetch(`https://api.github.com/users/${username}`).then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response is not ok')
+                }
+                return response.json();
+            })
+                .then(data => {
+                    displayProfile(data)
+                })
+                .catch(err => {
+                    console.error('!there was a problem in fetching data Please Try later', err);
+                })
+        }
+        function displayProfile(profileData) {
+            const profileElement = document.getElementById('profile')
+            profileElement.innerHTML = `<h1>${profileData.login}</h1>
+            <img src="${profileData.avatar_url}" style=" width:150px; border-radius:100px">
+            <div class="name"><h2>${profileData.name}</h2></div>
+            <div class="follow"><h4>Followers: ${profileData.followers}</h4>
+            <h4>Following: ${profileData.following}</h4></div>
+            <div class="bio"><h3>Bio: </h3><p> ${profileData.bio}</p></div>
+    <div class="mail"><h3>Email:</h3><p> ${profileData.email}</p></div>
+    <div class="pulicrepos"><h3>Public-Repos: </h3><p>${profileData.public_repos}</p></div>
+    <div class="blg"><h3>Site:</h3><p>${profileData.blog}</p></div>
+    <div class="cmpny"><h3>Company:</h3><p>${profileData.company}</p></div>
+    <a class="btn" href="${profileData.html_url}">Check Out Profile</a><br>`
+        }
+    </script>
+</body>
+
+</html>
